@@ -2,6 +2,7 @@ package com.example.myfirstapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -11,29 +12,62 @@ class MainActivity : AppCompatActivity() {
 
         val firstFragment = FirstFragment()
         val secondFragment = SecondFragment()
+        val thirdFragment = ThirdFragment()
 
+        setCurrentFragment(firstFragment)
+
+        //setOnItemSelectedListener
+        //NavigationItemSelectedListener deprecated
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.miHome -> setCurrentFragment(firstFragment)
+                R.id.miMessages -> setCurrentFragment(secondFragment)
+                R.id.miProfile -> setCurrentFragment(thirdFragment)
+            }
+            true
+        }
+
+        bottomNavigationView.getBadge(R.id.miMessages)?.apply {
+            number = 10
+            isVisible = true
+        }
+
+    }
+
+    private fun setCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flFragment, firstFragment)
+            replace(R.id.flFragment, fragment)
             commit()
         }
-
-        btnFragment1.setOnClickListener {
-            supportFragmentManager.beginTransaction().apply {
-                replace(R.id.flFragment, firstFragment)
-                addToBackStack(null)
-                commit()
-            }
-        }
-
-        btnFragment2.setOnClickListener {
-            supportFragmentManager.beginTransaction().apply {
-                replace(R.id.flFragment, secondFragment)
-                addToBackStack(null)
-                commit()
-            }
-        }
-    }
 }
+
+/** FRAGMENTS
+ *
+ *
+val firstFragment = FirstFragment()
+val secondFragment = SecondFragment()
+
+supportFragmentManager.beginTransaction().apply {
+replace(R.id.flFragment, firstFragment)
+commit()
+}
+
+btnFragment1.setOnClickListener {
+supportFragmentManager.beginTransaction().apply {
+replace(R.id.flFragment, firstFragment)
+addToBackStack(null)
+commit()
+}
+}
+
+btnFragment2.setOnClickListener {
+supportFragmentManager.beginTransaction().apply {
+replace(R.id.flFragment, secondFragment)
+addToBackStack(null)
+commit()
+}
+}
+ */
 
 /**
  * RECYCLER VIEW WITH ADAPTER
