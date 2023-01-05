@@ -2,44 +2,70 @@ package com.example.myfirstapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val firstFragment = FirstFragment()
-        val secondFragment = SecondFragment()
-        val thirdFragment = ThirdFragment()
-
-        setCurrentFragment(firstFragment)
-
-        //setOnItemSelectedListener
-        //NavigationItemSelectedListener deprecated
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when(it.itemId) {
-                R.id.miHome -> setCurrentFragment(firstFragment)
-                R.id.miMessages -> setCurrentFragment(secondFragment)
-                R.id.miProfile -> setCurrentFragment(thirdFragment)
-            }
-            true
-        }
-
-        bottomNavigationView.getBadge(R.id.miMessages)?.apply {
-            number = 10
-            isVisible = true
-        }
-
     }
-
-    private fun setCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flFragment, fragment)
-            commit()
-        }
 }
+
+/**
+ *
+ * View Pager 2 Image view
+ *
+ *
+val images = listOf(
+R.drawable.image1,
+R.drawable.image2,
+R.drawable.image3,
+R.drawable.number,
+)
+
+val adapter = ViewPagerAdapter(images)
+
+viewPager.adapter = adapter
+//        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+//        viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+viewPager.beginFakeDrag()
+viewPager.fakeDragBy(-10f)
+viewPager.endFakeDrag()
+ *
+ */
+
+/**
+ * BOTTOM NAVIGATION VIEW WITH FRAGMENTS
+ *
+ * val firstFragment = FirstFragment()
+val secondFragment = SecondFragment()
+val thirdFragment = ThirdFragment()
+
+setCurrentFragment(firstFragment)
+
+//setOnItemSelectedListener
+//NavigationItemSelectedListener deprecated
+bottomNavigationView.setOnNavigationItemSelectedListener {
+when(it.itemId) {
+R.id.miHome -> setCurrentFragment(firstFragment)
+R.id.miMessages -> setCurrentFragment(secondFragment)
+R.id.miProfile -> setCurrentFragment(thirdFragment)
+}
+true
+}
+
+bottomNavigationView.getBadge(R.id.miMessages)?.apply {
+number = 10
+isVisible = true
+}
+ *
+ *private fun setCurrentFragment(fragment: Fragment) =
+supportFragmentManager.beginTransaction().apply {
+replace(R.id.flFragment, fragment)
+commit()
+}
+ *
+ */
 
 /** FRAGMENTS
  *
