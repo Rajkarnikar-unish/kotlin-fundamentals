@@ -1,44 +1,97 @@
 package com.example.myfirstapp
 
+import android.content.Context
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+        val sharedPrefs = getSharedPreferences("myPref", Context.MODE_PRIVATE)
 
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        val editor = sharedPrefs.edit()
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        saveButton.setOnClickListener {
+            val name = nameEditText.text.toString()
+            val age = ageEditText.text.toString().toInt()
+            val isAdult = isAdultCheckBox.isChecked
 
-        navView.setNavigationItemSelectedListener {
-            when(it.itemId) {
-                R.id.miItem1 -> Toast.makeText(applicationContext, "Clicked Item 1", Toast.LENGTH_SHORT).show()
-                R.id.miItem2 -> Toast.makeText(applicationContext, "Clicked Item 2", Toast.LENGTH_SHORT).show()
-                R.id.miItem3 -> Toast.makeText(applicationContext, "Clicked Item 3", Toast.LENGTH_SHORT).show()
+            editor.apply {
+                putString("name", name)
+                putInt("age", age)
+                putBoolean("isAdult", isAdult)
+
+                apply()
             }
-            true
-        }
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (toggle.onOptionsItemSelected(item)) {
-            return true
+            nameEditText.text.clear()
+            ageEditText.text.clear()
+            isAdultCheckBox.isChecked = false
+
+            Toast.makeText(this, "Your details have been saved.", Toast.LENGTH_SHORT).show()
         }
-        return super.onOptionsItemSelected(item)
+
+        clearButton.setOnClickListener {
+            nameEditText.text.clear()
+            ageEditText.text.clear()
+            isAdultCheckBox.isChecked = false
+        }
+
+        loadButton.setOnClickListener {
+            val name = sharedPrefs.getString("name", null)
+            val age = sharedPrefs.getInt("age", 0)
+            val isAdult = sharedPrefs.getBoolean("isAdult", false)
+
+            nameEditText.setText(name)
+            ageEditText.setText(age.toString())
+            isAdultCheckBox.isChecked = isAdult
+
+            Toast.makeText(this, "Successfully loaded the data.", Toast.LENGTH_SHORT).show()
+        }
     }
 }
+
+/**
+ * Shared Preferences
+ *
+ *
+ *
+ */
+
+/**
+ * Navigation Drawer
+ *
+ * lateinit var toggle: ActionBarDrawerToggle
+ *
+ * toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+
+drawerLayout.addDrawerListener(toggle)
+toggle.syncState()
+
+supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+navView.setNavigationItemSelectedListener {
+when(it.itemId) {
+R.id.miItem1 -> Toast.makeText(applicationContext, "Clicked Item 1", Toast.LENGTH_SHORT).show()
+R.id.miItem2 -> Toast.makeText(applicationContext, "Clicked Item 2", Toast.LENGTH_SHORT).show()
+R.id.miItem3 -> Toast.makeText(applicationContext, "Clicked Item 3", Toast.LENGTH_SHORT).show()
+}
+true
+}
+ *
+ * override fun onOptionsItemSelected(item: MenuItem): Boolean {
+if (toggle.onOptionsItemSelected(item)) {
+return true
+}
+return super.onOptionsItemSelected(item)
+}
+ */
 
 /**
  * TAB LAYOUT WITH VIEW PAGER 2
