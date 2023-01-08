@@ -1,58 +1,62 @@
 package com.example.myfirstapp
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    val CHANNEL_ID = "channelID"
+    val CHANNEL_NAME = "channelName"
+    val NOTIFICATION_ID = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        createNotificationChannel()
 
-        val sharedPrefs = getSharedPreferences("myPref", Context.MODE_PRIVATE)
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = TaskStackBuilder.create(this).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
 
-        val editor = sharedPrefs.edit()
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("TEST NOTIFICATION")
+            .setContentText("This is a test notification")
+            .setSmallIcon(R.drawable.ic_profile)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .build()
 
-        saveButton.setOnClickListener {
-            val name = nameEditText.text.toString()
-            val age = ageEditText.text.toString().toInt()
-            val isAdult = isAdultCheckBox.isChecked
+        val notificationManager = NotificationManagerCompat.from(this)
 
-            editor.apply {
-                putString("name", name)
-                putInt("age", age)
-                putBoolean("isAdult", isAdult)
+        btnNotification.setOnClickListener {
+            notificationManager.notify(NOTIFICATION_ID, notification)
+        }
+    }
 
-                apply()
+    fun createNotificationChannel() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT).apply {
+                lightColor = Color.GREEN
+                enableLights(true)
             }
 
-            nameEditText.text.clear()
-            ageEditText.text.clear()
-            isAdultCheckBox.isChecked = false
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            Toast.makeText(this, "Your details have been saved.", Toast.LENGTH_SHORT).show()
-        }
-
-        clearButton.setOnClickListener {
-            nameEditText.text.clear()
-            ageEditText.text.clear()
-            isAdultCheckBox.isChecked = false
-        }
-
-        loadButton.setOnClickListener {
-            val name = sharedPrefs.getString("name", null)
-            val age = sharedPrefs.getInt("age", 0)
-            val isAdult = sharedPrefs.getBoolean("isAdult", false)
-
-            nameEditText.setText(name)
-            ageEditText.setText(age.toString())
-            isAdultCheckBox.isChecked = isAdult
-
-            Toast.makeText(this, "Successfully loaded the data.", Toast.LENGTH_SHORT).show()
+            manager.createNotificationChannel(channel)
         }
     }
 }
@@ -60,7 +64,47 @@ class MainActivity : AppCompatActivity() {
 /**
  * Shared Preferences
  *
- *
+ * val sharedPrefs = getSharedPreferences("myPref", Context.MODE_PRIVATE)
+
+val editor = sharedPrefs.edit()
+
+saveButton.setOnClickListener {
+val name = nameEditText.text.toString()
+val age = ageEditText.text.toString().toInt()
+val isAdult = isAdultCheckBox.isChecked
+
+editor.apply {
+putString("name", name)
+putInt("age", age)
+putBoolean("isAdult", isAdult)
+
+apply()
+}
+
+nameEditText.text.clear()
+ageEditText.text.clear()
+isAdultCheckBox.isChecked = false
+
+Toast.makeText(this, "Your details have been saved.", Toast.LENGTH_SHORT).show()
+}
+
+clearButton.setOnClickListener {
+nameEditText.text.clear()
+ageEditText.text.clear()
+isAdultCheckBox.isChecked = false
+}
+
+loadButton.setOnClickListener {
+val name = sharedPrefs.getString("name", null)
+val age = sharedPrefs.getInt("age", 0)
+val isAdult = sharedPrefs.getBoolean("isAdult", false)
+
+nameEditText.setText(name)
+ageEditText.setText(age.toString())
+isAdultCheckBox.isChecked = isAdult
+
+Toast.makeText(this, "Successfully loaded the data.", Toast.LENGTH_SHORT).show()
+}
  *
  */
 
