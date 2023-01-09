@@ -12,18 +12,47 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         btnStart.setOnClickListener {
-            Intent(this, MyIntentService::class.java).also {
+            Intent(this, MyService::class.java).also{
                 startService(it)
                 serviceInfoTextView.text = "Service running"
             }
         }
 
         btnStop.setOnClickListener {
-            MyIntentService.stopService()
-            serviceInfoTextView.text = "Service stopped"
+            Intent(this, MyService::class.java).also{
+                stopService(it)
+                serviceInfoTextView.text = "Service stopped"
+            }
+        }
+
+        btnSendData.setOnClickListener {
+            Intent(this, MyService::class.java).also {
+                val dataString = dataEditText.text.toString()
+                it.putExtra("EXTRA_DATA", dataString)
+                startService(it)
+            }
         }
     }
 }
+
+/**
+ * Intent Services
+ *
+ * REFERS TO MYINTENTSERVICE File
+ *
+ * btnStart.setOnClickListener {
+Intent(this, MyIntentService::class.java).also {
+startService(it)
+serviceInfoTextView.text = "Service running"
+}
+}
+
+btnStop.setOnClickListener {
+MyIntentService.stopService()
+serviceInfoTextView.text = "Service stopped"
+}
+
+ */
 
 /**
  * Notifications

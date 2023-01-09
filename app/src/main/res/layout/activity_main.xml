@@ -42,4 +42,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnStart" />
 
+    <EditText
+        android:id="@+id/dataEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:hint="Data String"
+        android:paddingHorizontal="20dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serviceInfoTextView" />
+
+    <Button
+        android:id="@+id/btnSendData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="send data"
+        app:layout_constraintEnd_toEndOf="@+id/dataEditText"
+        app:layout_constraintTop_toBottomOf="@+id/dataEditText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
