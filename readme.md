@@ -20,3 +20,6 @@
  • View Pager 2
  • Tab Layout with View Pager 2
  • Navigation Drawer
+ • Shared Preferences
+ • Notifications
+ • Intent Services
