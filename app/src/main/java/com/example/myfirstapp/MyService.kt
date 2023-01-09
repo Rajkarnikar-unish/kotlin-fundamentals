@@ -22,6 +22,14 @@ class MyService : Service() {
             Log.d(TAG, dataString)
         }
 
+        Thread {
+            while(true) {}
+        }.start()
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "Service is being killed...")
     }
 }
