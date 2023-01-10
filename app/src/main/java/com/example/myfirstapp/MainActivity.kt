@@ -1,7 +1,13 @@
 package com.example.myfirstapp
 
-import android.content.Intent
+import android.content.ClipData
+import android.content.ClipDescription
 import android.os.Bundle
+import android.view.DragEvent
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -11,29 +17,95 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btnStart.setOnClickListener {
-            Intent(this, MyService::class.java).also{
-                startService(it)
-                serviceInfoTextView.text = "Service running"
-            }
-        }
+        layoutTop.setOnDragListener(dragListener)
+        layoutBottom.setOnDragListener(dragListener)
 
-        btnStop.setOnClickListener {
-            Intent(this, MyService::class.java).also{
-                stopService(it)
-                serviceInfoTextView.text = "Service stopped"
-            }
-        }
+        dragView.setOnLongClickListener {
+            val clipText = "This is test data text"
 
-        btnSendData.setOnClickListener {
-            Intent(this, MyService::class.java).also {
-                val dataString = dataEditText.text.toString()
-                it.putExtra("EXTRA_DATA", dataString)
-                startService(it)
-            }
+            val item = ClipData.Item(clipText)
+
+            val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
+
+            val data = ClipData(clipText, mimeTypes, item)
+
+            val dragShadowBuilder = View.DragShadowBuilder(it)
+            it.startDragAndDrop(data, dragShadowBuilder, it, 0)
+
+            it.visibility = View.INVISIBLE
+
+            true
         }
     }
+
+    val dragListener = View.OnDragListener { view, event ->
+        when(event.action) {
+            DragEvent.ACTION_DRAG_STARTED -> {
+                event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+            }
+            DragEvent.ACTION_DRAG_ENTERED -> {
+                view.invalidate()
+                true
+            }
+
+            DragEvent.ACTION_DRAG_LOCATION -> true
+            DragEvent.ACTION_DRAG_EXITED -> {
+                view.invalidate()
+                true
+            }
+
+            DragEvent.ACTION_DROP -> {
+                val item = event.clipData.getItemAt(0)
+                val dragData = item.text
+                Toast.makeText(this, dragData, Toast.LENGTH_SHORT).show()
+
+                view.invalidate()
+
+                val v = event.localState as View
+                val owner = v.parent as ViewGroup
+                owner.removeView(v)
+                val destination = view as LinearLayout
+                destination.addView(v)
+                v.visibility = View.VISIBLE
+                true
+            }
+            DragEvent.ACTION_DRAG_ENDED-> {
+                view.invalidate()
+                true
+            }
+            else -> false
+        }
+    }
+
 }
+
+/**
+ * Services
+ *
+ *
+btnStart.setOnClickListener {
+Intent(this, MyService::class.java).also{
+startService(it)
+serviceInfoTextView.text = "Service running"
+}
+}
+
+btnStop.setOnClickListener {
+Intent(this, MyService::class.java).also{
+stopService(it)
+serviceInfoTextView.text = "Service stopped"
+}
+}
+
+btnSendData.setOnClickListener {
+Intent(this, MyService::class.java).also {
+val dataString = dataEditText.text.toString()
+it.putExtra("EXTRA_DATA", dataString)
+startService(it)
+}
+}
+ *
+ */
 
 /**
  * Intent Services
@@ -323,7 +395,6 @@ etTodo.text.clear()
  */
 
 
-
 /**
  * Spinner Widgets (Dropdown )
  * //List of data for dropdown without use of string xml
@@ -350,7 +421,6 @@ override fun onNothingSelected(parent: AdapterView<*>?) {
 }
 }
  */
-
 
 
 /**
