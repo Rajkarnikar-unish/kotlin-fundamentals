@@ -25,3 +25,4 @@
  • Intent Services </br>
  • Services </br>
  • Drag and Drop </br>
+ • Broadcast Receiver </br>
